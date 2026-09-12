@@ -4,6 +4,8 @@ Lamport clocks and vector clocks both order events in a distributed system by ca
 
 This benchmark quantifies it. A simulator runs a distributed workload and records the actual happens-before relation of that execution, derived from program order and message delivery only. Both clocks run over the same execution and are scored against that record.
 
+Findings, over 1,320 runs: [`REPORT.md`](REPORT.md).
+
 ---
 
 ## architecture
@@ -75,17 +77,6 @@ Individual stages are `make experiments`, `make analysis`, `make figures`. Indiv
 Experiments run sequentially. Each record includes wall-clock timings, which parallel execution would distort.
 
 Each experiment is a YAML file in [`configs/`](configs). The same config and seed reproduce a run exactly; there is a test for this.
-
----
-
-## limitations
-
-1. **Simulation, not deployment.** No sockets, no scheduler, no clock drift. The ordering results are properties of the executions and hold generally. The nanosecond timings are properties of one machine and do not.
-2. **Cost measured in Python.** The O(1) against O(N) difference would survive a rewrite. The constants would not.
-3. **Memory is a lower bound**, since CPython reuses small integers.
-4. **Synthetic workload**: uniform neighbour selection, exponential inter-event gaps. Real traffic has request/response structure and bursts.
-5. **One parameter varies at a time.** Interactions between parameters are not covered.
-6. **Dense vectors only.** Compression schemes are discussed but not measured.
 
 ---
 

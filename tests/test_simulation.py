@@ -108,10 +108,7 @@ def test_every_node_takes_the_configured_number_of_steps():
     config = SimulationConfig(nodes=5, events_per_node=40, seed=3)
     result = run(config)
 
-    steps = [
-        sum(1 for e in result.events if e.node_id == n and e.event_type is not EventType.RECEIVE)
-        for n in range(config.nodes)
-    ]
+    steps = [sum(1 for e in result.events if e.node_id == n and e.event_type is not EventType.RECEIVE) for n in range(config.nodes)]
     assert steps == [config.events_per_node] * config.nodes
 
 

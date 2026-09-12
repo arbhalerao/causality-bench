@@ -103,9 +103,7 @@ def run(config: SimulationConfig) -> SimulationResult:
 
     event_ids = itertools.count()
     message_ids = itertools.count()
-    nodes = [
-        Node(node_id=i, node_count=config.nodes, event_ids=event_ids) for i in range(config.nodes)
-    ]
+    nodes = [Node(node_id=i, node_count=config.nodes, event_ids=event_ids) for i in range(config.nodes)]
 
     messages: list[Message] = []
     delivered: set[int] = set()

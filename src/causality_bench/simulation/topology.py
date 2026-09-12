@@ -47,9 +47,7 @@ def build_neighbourhoods(topology: Topology | str, node_count: int, seed: int) -
 def _connected_random_graph(node_count: int, seed: int) -> nx.Graph:
     """resample until connected so every node can participate in the execution"""
     for attempt in range(100):
-        graph = nx.gnp_random_graph(
-            node_count, DEFAULT_RANDOM_EDGE_PROBABILITY, seed=seed + attempt
-        )
+        graph = nx.gnp_random_graph(node_count, DEFAULT_RANDOM_EDGE_PROBABILITY, seed=seed + attempt)
         if nx.is_connected(graph):
             return graph
 

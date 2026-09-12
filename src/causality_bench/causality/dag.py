@@ -37,9 +37,9 @@ class CausalGraph:
         if a == b:
             return False
 
-        # a -> b iff b's causal past already contains a's position on a's node
-        left = self._by_id[a]
-        return bool(self._local_sequence[self._position[a]] <= self._ancestor_index[self._position[b], left.node_id])
+        # a -> b iff b's causal past already reaches a's position on a's node
+        source = self._by_id[a]
+        return bool(self._local_sequence[self._position[a]] <= self._ancestor_index[self._position[b], source.node_id])
 
     def relation(self, a: int, b: int) -> Relation:
         if a == b:
@@ -65,6 +65,8 @@ class CausalGraph:
 
     def transitive_pairs(self) -> int:
         """number of ordered pairs (a, b) with a -> b"""
+        # a causal past is prefix-closed on every node, so the highest sequence
+        # reached on a node is also the count of that node's events in the past
         counts = self._ancestor_index.sum(axis=1, dtype=np.int64)
         # each row counts the events in the causal past including the event itself
         return int(counts.sum() - len(self.events))

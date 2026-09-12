@@ -14,18 +14,18 @@ from causality_bench.experiments.statistics import (
 @pytest.fixture
 def frame():
     rng = np.random.default_rng(0)
-    rows = []
-    for nodes in (2, 4, 8):
-        for seed in range(20):
-            rows.append(
-                {
-                    "nodes": nodes,
-                    "seed": seed,
-                    "cheap": 100.0 + rng.normal(0, 1),
-                    "costly": 100.0 * nodes + rng.normal(0, 1),
-                }
-            )
-    return pd.DataFrame(rows)
+    return pd.DataFrame(
+        [
+            {
+                "nodes": nodes,
+                "seed": seed,
+                "cheap": 100.0 + rng.normal(0, 1),
+                "costly": 100.0 * nodes + rng.normal(0, 1),
+            }
+            for nodes in (2, 4, 8)
+            for seed in range(20)
+        ]
+    )
 
 
 def test_interval_brackets_the_sample_mean():

@@ -4,9 +4,9 @@ import pytest
 
 matplotlib.use("Agg")
 
-from causality_bench.experiments.runner import ExperimentSpec, run_experiment  # noqa: E402
-from causality_bench.simulation import SimulationConfig, run  # noqa: E402
-from causality_bench.visualization import (  # noqa: E402
+from causality_bench.experiments.runner import ExperimentSpec, run_experiment
+from causality_bench.simulation import SimulationConfig, run
+from causality_bench.visualization import (
     apply_style,
     causal_dag,
     concurrency_vs_delay,

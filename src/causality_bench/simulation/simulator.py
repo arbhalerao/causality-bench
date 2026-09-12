@@ -44,7 +44,7 @@ class SimulationConfig:
 
     @classmethod
     def from_dict(cls, values: dict[str, Any]) -> SimulationConfig:
-        known = {f for f in cls.__dataclass_fields__}
+        known = set(cls.__dataclass_fields__)
         unknown = set(values) - known
         if unknown:
             raise ValueError(f"unknown configuration keys: {sorted(unknown)}")

@@ -47,11 +47,3 @@ def lamport_relation(a: Event, b: Event, tie_break: bool = False) -> Relation:
     if left > right:
         return Relation.AFTER
     return Relation.CONCURRENT
-
-
-def inverse(relation: Relation) -> Relation:
-    if relation is Relation.BEFORE:
-        return Relation.AFTER
-    if relation is Relation.AFTER:
-        return Relation.BEFORE
-    return relation

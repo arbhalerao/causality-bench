@@ -113,7 +113,7 @@ def log_log_slope(
         "slope_ci_low": float(fit.slope - half_width),
         "slope_ci_high": float(fit.slope + half_width),
         "r_squared": float(fit.rvalue**2),
-        "observations": int(len(subset)),
+        "observations": len(subset),
     }
 
 

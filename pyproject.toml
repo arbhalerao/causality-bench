@@ -38,5 +38,5 @@ line-length = 150
 src = ["src", "tests"]
 
 [tool.ruff.lint]
-select = ["E", "F", "I", "UP", "B", "SIM"]
+select = ["E", "F", "I", "UP", "B", "SIM", "C4", "PIE", "PERF", "RUF"]
 ignore = ["B008"]

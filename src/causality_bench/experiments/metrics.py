@@ -220,10 +220,10 @@ def _measure_retained_bytes(events: Sequence[Event]) -> tuple[int, int]:
     scalars = [int(e.lamport_timestamp) for e in events]
     lamport_bytes = tracemalloc.get_traced_memory()[0] - before
 
-    # tuple() on a tuple returns the same object, so copy through a list to
-    # force a fresh allocation per timestamp
+    # tuple() on a tuple returns the same object,
+    # so rebuild each timestamp element by element to force a fresh allocation
     before = tracemalloc.get_traced_memory()[0]
-    vectors = [tuple(list(e.vector_timestamp)) for e in events]
+    vectors = [tuple(entry for entry in e.vector_timestamp) for e in events]
     vector_bytes = tracemalloc.get_traced_memory()[0] - before
     tracemalloc.stop()
 

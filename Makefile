@@ -3,11 +3,12 @@ VENV := .venv/bin/python
 DEPS := .venv/.installed
 PYTHON ?= $(VENV)
 PIP ?= .venv/bin/pip
+JUPYTER ?= .venv/bin/jupyter
 
 EXPERIMENTS := baseline scaling message_rate delay topology failures
 
 .DEFAULT_GOAL := help
-.PHONY: help venv install test lint format check experiments analysis figures reproduce clean-results clean
+.PHONY: help venv install test lint format check experiments analysis figures notebooks generate discard clean
 
 help:  ## print this help
 	@grep -hE '^[a-z][a-zA-Z0-9_-]*:.*?## ' $(MAKEFILE_LIST) \
@@ -18,12 +19,12 @@ $(VENV):
 	$(PIP) install --upgrade pip
 
 $(DEPS): $(VENV) pyproject.toml
-	$(PIP) install -e ".[dev]"
+	$(PIP) install -e ".[dev,notebook]"
 	@touch $(DEPS)
 
 venv: $(VENV)  ## create .venv if missing
 
-install: $(DEPS)  ## install the package and dev dependencies
+install: $(DEPS)  ## install the dependencies
 
 test: $(DEPS)  ## run the test suite
 	$(PYTHON) -m pytest -v
@@ -46,11 +47,15 @@ analysis: $(DEPS)  ## aggregate raw results into results/processed
 figures: $(DEPS)  ## render every figure into results/figures
 	$(PYTHON) experiments/make_figures.py
 
-reproduce: experiments analysis figures  ## regenerate every result and figure from scratch
+notebooks: $(DEPS)  ## re-execute the notebooks against the current results
+	$(JUPYTER) nbconvert --execute --inplace --to notebook notebooks/*.ipynb
 
-clean-results:  ## delete every generated result, figure, and provenance record
+generate: experiments analysis figures notebooks  ## produce every result, figure, and notebook from scratch
+
+discard:  ## undo generate: delete the results
 	rm -rf results/raw results/processed results/figures
+	$(JUPYTER) nbconvert --clear-output --inplace notebooks/*.ipynb
 
-clean:  ## remove the venv, caches, and build artifacts
+clean: discard  ## remove the venv, caches, build artifacts, and generated output
 	find . -name __pycache__ -type d -prune -exec rm -rf {} +
 	rm -rf .venv .pytest_cache .ruff_cache build dist src/*.egg-info

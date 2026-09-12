@@ -67,7 +67,7 @@ Pairs are counted exhaustively rather than sampled.
 ```bash
 make install
 make check
-make reproduce     # six experiments, then aggregation, then figures
+make generate      # six experiments, then aggregation, figures, notebooks
 ```
 
 Individual stages are `make experiments`, `make analysis`, `make figures`. Individual experiments are `.venv/bin/python experiments/run_baseline.py` and the same for `scaling`, `message_rate`, `delay`, `topology`, `failures`.

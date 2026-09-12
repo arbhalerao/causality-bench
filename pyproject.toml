@@ -5,9 +5,8 @@ build-backend = "setuptools.build_meta"
 [project]
 name = "causality-bench"
 version = "0.1.0"
-description = "experimental study of causal information loss in Lamport clocks versus Vector clocks"
+description = "experimental study of causal information loss in Lamport clocks versus vector clocks"
 readme = "README.md"
-license = { file = "LICENSE" }
 requires-python = ">=3.10"
 dependencies = [
     "numpy>=1.26",

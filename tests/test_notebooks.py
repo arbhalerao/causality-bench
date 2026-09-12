@@ -35,11 +35,7 @@ def test_committed_outputs_are_in_execution_order(path):
     if they came from one top-to-bottom run rather than cells fired piecemeal
     """
     document = json.loads(path.read_text())
-    counts = [
-        cell["execution_count"]
-        for cell in document["cells"]
-        if cell["cell_type"] == "code" and cell.get("execution_count") is not None
-    ]
+    counts = [cell["execution_count"] for cell in document["cells"] if cell["cell_type"] == "code" and cell.get("execution_count") is not None]
     assert counts == sorted(counts), f"cells were run out of order: {counts}"
 
 

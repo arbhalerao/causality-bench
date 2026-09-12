@@ -20,3 +20,6 @@ venv/
 
 # os
 .DS_Store
+
+# local reference material
+notes/

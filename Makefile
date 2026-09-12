@@ -7,11 +7,11 @@ PIP ?= .venv/bin/pip
 EXPERIMENTS := baseline scaling message_rate delay topology failures
 
 .DEFAULT_GOAL := help
-.PHONY: help venv install test lint format check experiments analysis figures reproduce clean
+.PHONY: help venv install test lint format check experiments analysis figures reproduce clean-results clean
 
 help:  ## print this help
 	@grep -hE '^[a-z][a-zA-Z0-9_-]*:.*?## ' $(MAKEFILE_LIST) \
-		| awk -F':.*?## ' '{printf "  \033[36m%-12s\033[0m %s\n", $$1, $$2}'
+		| awk -F':.*?## ' '{printf "  \033[36m%-13s\033[0m %s\n", $$1, $$2}'
 
 $(VENV):
 	$(BOOTSTRAP_PYTHON) -m venv .venv
@@ -47,6 +47,9 @@ figures: $(DEPS)  ## render every figure into results/figures
 	$(PYTHON) experiments/make_figures.py
 
 reproduce: experiments analysis figures  ## regenerate every result and figure from scratch
+
+clean-results:  ## delete every generated result, figure, and provenance record
+	rm -rf results/raw results/processed results/figures
 
 clean:  ## remove the venv, caches, and build artifacts
 	find . -name __pycache__ -type d -prune -exec rm -rf {} +

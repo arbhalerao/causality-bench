@@ -10,6 +10,7 @@ from causality_bench.experiments.statistics import (
     summarize,
     write_processed,
 )
+from causality_bench.provenance import read_csv
 
 RAW_DIR = Path("results/raw")
 
@@ -60,7 +61,7 @@ SCALING_FITS = [
 
 
 def raw(name: str) -> pd.DataFrame:
-    return pd.read_csv(RAW_DIR / f"{name}.csv")
+    return read_csv(RAW_DIR / f"{name}.csv")
 
 
 def main() -> None:

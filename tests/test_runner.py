@@ -3,6 +3,7 @@ import pytest
 import yaml
 
 from causality_bench.experiments.runner import ExperimentSpec, run_experiment, save_raw
+from causality_bench.provenance import read_csv
 
 
 def write_spec(tmp_path, document):
@@ -81,4 +82,4 @@ def test_raw_results_round_trip_through_csv(tmp_path, spec_document):
     path = save_raw(frame, spec.name, tmp_path / "raw")
 
     assert path.exists()
-    assert len(pd.read_csv(path)) == len(frame)
+    assert len(read_csv(path)) == len(frame)

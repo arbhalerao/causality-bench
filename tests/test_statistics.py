@@ -9,6 +9,7 @@ from causality_bench.experiments.statistics import (
     summarize,
     write_processed,
 )
+from causality_bench.provenance import read_csv
 
 
 @pytest.fixture
@@ -107,4 +108,4 @@ def test_processed_tables_round_trip_through_csv(frame, tmp_path):
     path = write_processed(summary, "unit", tmp_path)
 
     assert path.exists()
-    assert len(pd.read_csv(path)) == len(summary)
+    assert len(read_csv(path)) == len(summary)

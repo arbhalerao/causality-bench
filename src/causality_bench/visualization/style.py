@@ -6,6 +6,8 @@ from pathlib import Path
 import matplotlib as mpl
 import matplotlib.pyplot as plt
 
+from causality_bench.provenance import png_metadata
+
 FIGURE_DIR = Path("results/figures")
 
 SURFACE = "#fcfcfb"
@@ -77,6 +79,6 @@ def save_figure(fig: plt.Figure, name: str, caption: str, directory: Path = FIGU
     )
 
     path = directory / f"{name}.png"
-    fig.savefig(path)
+    fig.savefig(path, metadata=png_metadata("experiments/make_figures.py", figure=name))
     plt.close(fig)
     return path

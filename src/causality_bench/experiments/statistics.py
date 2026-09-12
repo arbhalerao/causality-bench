@@ -7,6 +7,8 @@ import numpy as np
 import pandas as pd
 from scipy import stats
 
+from causality_bench.provenance import write_csv
+
 CONFIDENCE = 0.95
 DEFAULT_PROCESSED_DIR = Path("results/processed")
 
@@ -118,7 +120,4 @@ def log_log_slope(
 
 
 def write_processed(frame: pd.DataFrame, name: str, directory: Path = DEFAULT_PROCESSED_DIR) -> Path:
-    directory.mkdir(parents=True, exist_ok=True)
-    path = directory / f"{name}.csv"
-    frame.to_csv(path, index=False)
-    return path
+    return write_csv(frame, directory / f"{name}.csv", source="experiments/run_analysis.py")

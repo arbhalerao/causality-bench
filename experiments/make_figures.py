@@ -2,6 +2,7 @@
 
 import pandas as pd
 
+from causality_bench.provenance import read_csv
 from causality_bench.simulation import SimulationConfig, run
 from causality_bench.visualization import (
     apply_style,
@@ -31,7 +32,7 @@ ILLUSTRATION = SimulationConfig(
 
 
 def raw(name: str) -> pd.DataFrame:
-    return pd.read_csv(f"results/raw/{name}.csv")
+    return read_csv(f"results/raw/{name}.csv")
 
 
 def main() -> None:

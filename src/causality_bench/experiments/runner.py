@@ -11,6 +11,7 @@ import pandas as pd
 import yaml
 
 from causality_bench.experiments.metrics import evaluate
+from causality_bench.provenance import write_csv
 from causality_bench.simulation.simulator import SimulationConfig, run
 
 DEFAULT_RAW_DIR = Path("results/raw")
@@ -83,10 +84,7 @@ def run_experiment(spec: ExperimentSpec, progress: bool = True) -> pd.DataFrame:
 
 
 def save_raw(frame: pd.DataFrame, name: str, raw_dir: Path = DEFAULT_RAW_DIR) -> Path:
-    raw_dir.mkdir(parents=True, exist_ok=True)
-    path = raw_dir / f"{name}.csv"
-    frame.to_csv(path, index=False)
-    return path
+    return write_csv(frame, raw_dir / f"{name}.csv", source=f"experiments/run_{name}.py")
 
 
 def execute(spec_path: str | Path, raw_dir: Path = DEFAULT_RAW_DIR) -> Path:

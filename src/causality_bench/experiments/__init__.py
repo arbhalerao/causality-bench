@@ -7,6 +7,12 @@ from causality_bench.experiments.metrics import (
     evaluate,
     metadata_metrics,
 )
+from causality_bench.experiments.runner import (
+    ExperimentSpec,
+    execute,
+    run_experiment,
+    save_raw,
+)
 from causality_bench.experiments.scenarios import (
     SCENARIOS,
     ExecutionBuilder,
@@ -17,6 +23,7 @@ from causality_bench.experiments.scenarios import (
 __all__ = [
     "SCENARIOS",
     "CausalMetrics",
+    "ExperimentSpec",
     "ExecutionBuilder",
     "MetadataMetrics",
     "RuntimeMetrics",
@@ -25,5 +32,8 @@ __all__ = [
     "benchmark_clock_operations",
     "causal_metrics",
     "evaluate",
+    "execute",
     "metadata_metrics",
+    "run_experiment",
+    "save_raw",
 ]

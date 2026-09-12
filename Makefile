@@ -24,14 +24,14 @@ venv: $(VENV)  ## create .venv if missing
 install: $(DEPS)  ## install the package and dev dependencies
 
 test: $(DEPS)  ## run the test suite
-	$(PYTHON) -m pytest
+	$(PYTHON) -m pytest -v
 
 lint: $(DEPS)  ## check formatting and lint rules
-	$(PYTHON) -m ruff check src tests
+	$(PYTHON) -m ruff check src tests experiments
 
 format: $(DEPS)  ## apply formatting and autofixes
-	$(PYTHON) -m black src tests
-	$(PYTHON) -m ruff check --fix src tests
+	$(PYTHON) -m black src tests experiments
+	$(PYTHON) -m ruff check --fix src tests experiments
 
 check: lint test  ## lint then test
 

@@ -1,0 +1,18 @@
+name: topology
+description: >
+  communication structure sweep at a fixed node count and message rate;
+  only the set of permitted sender-receiver pairs changes,
+  so differences in causal structure are attributable to the shape of the communication graph
+seeds:
+  start: 42
+  count: 30
+base:
+  nodes: 32
+  events_per_node: 1000
+  message_probability: 0.25
+  delay_distribution: exponential
+  mean_delay: 10.0
+  mean_interarrival: 1.0
+  loss_probability: 0.0
+sweep:
+  topology: [ring, star, complete, random, scale_free]

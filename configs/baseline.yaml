@@ -1,0 +1,15 @@
+name: baseline
+description: >
+  reference execution used to characterise causal structure and clock overhead before any parameter is varied
+seeds:
+  start: 42
+  count: 30
+base:
+  nodes: 8
+  events_per_node: 1000
+  message_probability: 0.25
+  topology: complete
+  delay_distribution: exponential
+  mean_delay: 10.0
+  mean_interarrival: 1.0
+  loss_probability: 0.0

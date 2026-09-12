@@ -1,0 +1,17 @@
+name: scaling
+description: >
+  node count sweep at a fixed per-node workload;
+  the number of events grows with the system so that vector clock cost is measured under a proportionally growing execution rather than a fixed one
+seeds:
+  start: 42
+  count: 30
+base:
+  events_per_node: 1000
+  message_probability: 0.25
+  topology: complete
+  delay_distribution: exponential
+  mean_delay: 10.0
+  mean_interarrival: 1.0
+  loss_probability: 0.0
+sweep:
+  nodes: [2, 4, 8, 16, 32, 64, 128]

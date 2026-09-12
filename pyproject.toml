@@ -28,7 +28,6 @@ where = ["src"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
-addopts = "-q"
 
 [tool.black]
 line-length = 150

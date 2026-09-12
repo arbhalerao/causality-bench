@@ -26,6 +26,8 @@ class SimulationConfig:
     mean_delay: float = 10.0
     mean_interarrival: float = 1.0
     loss_probability: float = 0.0
+    failure_probability: float = 0.0
+    mean_failure_duration: float = 0.0
     seed: int = 0
 
     def __post_init__(self) -> None:
@@ -35,6 +37,10 @@ class SimulationConfig:
             raise ValueError("each node must take at least one step")
         if not 0.0 <= self.message_probability <= 1.0:
             raise ValueError("message probability must be a probability")
+        if not 0.0 <= self.failure_probability < 1.0:
+            raise ValueError("failure probability must be below one to guarantee progress")
+        if self.failure_probability > 0.0 and self.mean_failure_duration <= 0.0:
+            raise ValueError("a failing node needs a positive mean failure duration")
 
     @classmethod
     def from_dict(cls, values: dict[str, Any]) -> SimulationConfig:
@@ -56,6 +62,10 @@ class SimulationResult:
     delivered_message_ids: set[int]
     wall_clock_seconds: float
     final_time: float
+    failures: int = 0
+    total_downtime: float = 0.0
+    messages_dropped_by_network: int = 0
+    messages_dropped_by_failure: int = 0
     events_by_id: dict[int, Event] = field(init=False)
 
     def __post_init__(self) -> None:
@@ -109,6 +119,14 @@ def run(config: SimulationConfig) -> SimulationResult:
     delivered: set[int] = set()
     remaining_steps = [config.events_per_node] * config.nodes
 
+    # a crashed node keeps its clock state across the outage;
+    # a node that lost its logical time on recovery could no longer satisfy the clock condition
+    recovers_at = [0.0] * config.nodes
+    failures = 0
+    downtime = 0.0
+    dropped_by_network = 0
+    dropped_by_failure = 0
+
     # a strictly increasing sequence number makes the queue a total order even when two entries share a timestamp
     order = itertools.count()
     queue: list[tuple[float, int, _Kind, Any]] = []
@@ -123,10 +141,25 @@ def run(config: SimulationConfig) -> SimulationResult:
 
         if kind is _Kind.DELIVERY:
             message: Message = payload
+            if now < recovers_at[message.receiver]:
+                dropped_by_failure += 1
+                continue
             nodes[message.receiver].deliver(message, now)
+            delivered.add(message.message_id)
             continue
 
         node_id = payload
+        if config.failure_probability > 0.0 and streams[node_id]["failure"].random() < (config.failure_probability):
+            outage = float(streams[node_id]["failure"].exponential(config.mean_failure_duration))
+            recovers_at[node_id] = now + outage
+            failures += 1
+            downtime += outage
+
+            # the pending step is resumed on recovery,
+            # so the workload per node stays fixed and only the execution structure changes
+            heapq.heappush(queue, (recovers_at[node_id], next(order), _Kind.STEP, node_id))
+            continue
+
         node = nodes[node_id]
         workload = streams[node_id]["workload"]
         neighbours = network.neighbours(node_id)
@@ -145,8 +178,9 @@ def run(config: SimulationConfig) -> SimulationResult:
                 send_event_id=send_event.event_id,
             )
             messages.append(message)
-            if not network.drops(streams[node_id]["loss"]):
-                delivered.add(message.message_id)
+            if network.drops(streams[node_id]["loss"]):
+                dropped_by_network += 1
+            else:
                 heapq.heappush(queue, (message.delivery_time, next(order), _Kind.DELIVERY, message))
         else:
             node.local_event(now)
@@ -165,4 +199,8 @@ def run(config: SimulationConfig) -> SimulationResult:
         delivered_message_ids=delivered,
         wall_clock_seconds=elapsed,
         final_time=now,
+        failures=failures,
+        total_downtime=downtime,
+        messages_dropped_by_network=dropped_by_network,
+        messages_dropped_by_failure=dropped_by_failure,
     )

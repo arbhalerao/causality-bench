@@ -1,0 +1,20 @@
+name: failure
+description: >
+  message loss crossed with crash-recovery node failures; the two mechanisms are
+  swept independently so that loss in transit can be separated from loss caused
+  by an unavailable receiver, and node clocks persist across an outage
+seeds:
+  start: 42
+  count: 30
+base:
+  nodes: 8
+  events_per_node: 1000
+  message_probability: 0.25
+  topology: complete
+  delay_distribution: exponential
+  mean_delay: 10.0
+  mean_interarrival: 1.0
+  mean_failure_duration: 20.0
+sweep:
+  loss_probability: [0.0, 0.05, 0.10, 0.25]
+  failure_probability: [0.0, 0.005, 0.01, 0.02]

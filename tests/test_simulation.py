@@ -167,3 +167,72 @@ def test_config_rejects_degenerate_sizes():
         SimulationConfig(nodes=1, events_per_node=10)
     with pytest.raises(ValueError):
         SimulationConfig(nodes=4, events_per_node=0)
+
+
+def test_node_failures_drop_messages_in_flight_to_the_failed_node():
+    config = SimulationConfig(
+        nodes=6,
+        events_per_node=300,
+        failure_probability=0.02,
+        mean_failure_duration=20.0,
+        seed=27,
+    )
+    result = run(config)
+
+    assert result.failures > 0
+    assert result.total_downtime > 0
+    assert result.messages_dropped_by_failure > 0
+    assert result.messages_dropped_by_network == 0
+
+
+def test_failed_nodes_resume_their_pending_work_after_recovery():
+    config = SimulationConfig(
+        nodes=5,
+        events_per_node=200,
+        failure_probability=0.05,
+        mean_failure_duration=15.0,
+        seed=33,
+    )
+    result = run(config)
+
+    steps = [sum(1 for e in result.events if e.node_id == n and e.event_type is not EventType.RECEIVE) for n in range(config.nodes)]
+    assert steps == [config.events_per_node] * config.nodes
+
+
+def test_clocks_survive_a_failure_and_stay_monotone_on_each_node():
+    config = SimulationConfig(
+        nodes=5,
+        events_per_node=200,
+        failure_probability=0.05,
+        mean_failure_duration=15.0,
+        seed=34,
+    )
+    result = run(config)
+
+    for node_id in range(config.nodes):
+        stamps = [e.lamport_timestamp for e in result.events if e.node_id == node_id]
+        assert stamps == sorted(stamps)
+        assert len(set(stamps)) == len(stamps)
+
+
+def test_loss_and_failure_account_for_every_undelivered_message():
+    config = SimulationConfig(
+        nodes=6,
+        events_per_node=300,
+        loss_probability=0.1,
+        failure_probability=0.01,
+        mean_failure_duration=20.0,
+        seed=37,
+    )
+    result = run(config)
+
+    assert result.messages_dropped_by_network > 0
+    assert result.messages_dropped_by_failure > 0
+    assert result.messages_dropped_by_network + result.messages_dropped_by_failure == result.lost_messages
+
+
+def test_failure_configuration_requires_a_duration():
+    with pytest.raises(ValueError):
+        SimulationConfig(nodes=4, events_per_node=10, failure_probability=0.1)
+    with pytest.raises(ValueError):
+        SimulationConfig(nodes=4, events_per_node=10, failure_probability=1.0)

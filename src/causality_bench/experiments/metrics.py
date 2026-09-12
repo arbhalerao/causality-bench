@@ -189,6 +189,10 @@ def evaluate(result: SimulationResult, repetitions: int = 20000) -> dict[str, An
     record.update(asdict(runtime_metrics(result, graph_seconds, repetitions)))
     record.update(event_type_counts(result))
     record["messages_lost"] = result.lost_messages
+    record["messages_dropped_by_network"] = result.messages_dropped_by_network
+    record["messages_dropped_by_failure"] = result.messages_dropped_by_failure
+    record["failures"] = result.failures
+    record["total_downtime"] = result.total_downtime
     record["final_logical_time"] = result.final_time
     return record
 

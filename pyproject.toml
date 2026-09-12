@@ -1,0 +1,43 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "causality-bench"
+version = "0.1.0"
+description = "experimental study of causal information loss in Lamport clocks versus Vector clocks"
+readme = "README.md"
+license = { file = "LICENSE" }
+requires-python = ">=3.10"
+dependencies = [
+    "numpy>=1.26",
+    "pandas>=2.1",
+    "networkx>=3.2",
+    "matplotlib>=3.8",
+    "scipy>=1.11",
+    "pyyaml>=6.0",
+    "pyarrow>=14.0",
+    "psutil>=5.9",
+]
+
+[project.optional-dependencies]
+dev = ["pytest>=7.4", "ruff>=0.4", "black>=24.1"]
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-q"
+
+[tool.black]
+line-length = 100
+target-version = ["py310"]
+
+[tool.ruff]
+line-length = 100
+src = ["src", "tests"]
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "UP", "B", "SIM"]
+ignore = ["B008"]

@@ -19,6 +19,13 @@ from causality_bench.experiments.scenarios import (
     Scenario,
     all_scenarios,
 )
+from causality_bench.experiments.statistics import (
+    confidence_interval,
+    log_log_slope,
+    paired_comparison,
+    summarize,
+    write_processed,
+)
 
 __all__ = [
     "SCENARIOS",
@@ -31,9 +38,14 @@ __all__ = [
     "all_scenarios",
     "benchmark_clock_operations",
     "causal_metrics",
+    "confidence_interval",
     "evaluate",
     "execute",
     "metadata_metrics",
+    "log_log_slope",
+    "paired_comparison",
     "run_experiment",
     "save_raw",
+    "summarize",
+    "write_processed",
 ]
